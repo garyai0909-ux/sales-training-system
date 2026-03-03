@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WEiZ｜銷售人員訓練介面</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --card: #121b2e;
+      --soft: #1a2742;
+      --line: #2a3c63;
+      --text: #eaf1ff;
+      --muted: #9db1d4;
+      --accent: #37d3a7;
+      --warn: #ffb020;
+      --danger: #ff6b6b;
+      --chip: #223357;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans TC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 20% 0%, #1a2a4d 0%, var(--bg) 45%);
+      min-height: 100vh;
+    }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .top {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      margin-bottom: 18px;
+    }
+    .title { font-size: 22px; font-weight: 800; letter-spacing: .3px; }
+    .sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+    .pill { background: var(--chip); border: 1px solid var(--line); color: #b8caea; padding: 8px 12px; border-radius: 999px; font-size: 12px; }
+
+    .grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 14px; }
+    .col { display: grid; gap: 14px; }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)) , var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .card h3 { margin: 0 0 10px; font-size: 16px; }
+
+    .kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+    .kpi { background: var(--soft); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+    .kpi .n { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+    .kpi .l { font-size: 12px; color: var(--muted); }
+
+    .modules { display: grid; gap: 10px; }
+    .module {
+      border: 1px solid var(--line); border-radius: 12px; padding: 11px;
+      display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center;
+      background: #111a2d;
+    }
+    .module .name { font-weight: 700; }
+    .tag { font-size: 11px; border-radius: 999px; padding: 4px 9px; background: var(--chip); color: #b9cbeb; border: 1px solid var(--line); }
+    .bar { height: 8px; border-radius: 999px; background: #0f1628; border: 1px solid #213357; margin-top: 8px; overflow: hidden; }
+    .bar > span { display:block; height:100%; background: linear-gradient(90deg, #27c89a, #4be3bc); }
+
+    .table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .table th,.table td { padding: 9px 8px; border-bottom: 1px solid var(--line); text-align: left; }
+    .table th { color: var(--muted); font-weight: 600; }
+    .score.good { color: var(--accent); }
+    .score.mid { color: var(--warn); }
+    .score.bad { color: var(--danger); }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    button {
+      border: 1px solid var(--line); background: var(--soft); color: var(--text);
+      border-radius: 10px; padding: 9px 12px; cursor: pointer; font-weight: 700;
+    }
+    button.primary { background: #153c4f; border-color: #2c6f8f; }
+
+    .chat-box { display:grid; gap:8px; }
+    .bubble {
+      background: #0f1628; border:1px solid #20345a; border-radius:10px; padding:10px; font-size:13px;
+    }
+    .bubble.coach { border-color: #2f6f60; background:#0f1d1b; }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      .kpis { grid-template-columns: repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <div class="title">銷售人員訓練中心（含銷售儀表）</div>
+        <div class="sub">情境演練・產品知識・話術優化（即時回饋）</div>
+      </div>
+      <div class="pill" id="dataSourceTag">數據來源：WEIBO AI存取區 / 202602銷售數據.xlsx</div>
+    </div>
+
+    <div class="grid">
+      <div class="col">
+        <section class="card">
+          <h3>今日學習總覽</h3>
+          <div class="kpis">
+            <div class="kpi"><div class="n" id="kpi1">3,102,569</div><div class="l">2月總業績（WEiZ）</div></div>
+            <div class="kpi"><div class="n" id="kpi2">2,063</div><div class="l">2月總銷售PCS</div></div>
+            <div class="kpi"><div class="n" id="kpi3">2,850,000</div><div class="l">2月目標業績</div></div>
+            <div class="kpi"><div class="n" id="kpi4">108.86%</div><div class="l">2月達成率</div></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h3>訓練模組進度</h3>
+          <div class="modules" id="modules"></div>
+        </section>
+
+        <section class="card">
+          <h3>門市業績達成（2026-02）</h3>
+          <table class="table">
+            <thead>
+              <tr><th>門市</th><th>達成率</th><th>業績</th><th>目標</th></tr>
+            </thead>
+            <tbody id="storeRows"></tbody>
+          </table>
+        </section>
+      </div>
+
+      <div class="col">
+        <section class="card">
+          <h3>教練模式</h3>
+          <div class="actions">
+            <button class="primary" id="startBtn">開始情境演練</button>
+            <button id="retryBtn">錯題複訓</button>
+            <button id="reportBtn">產生主管報表</button>
+          </div>
+          <div class="sub" style="margin-top:8px">建議每日 15 分鐘，專攻高客訴情境與高單價商品話術。</div>
+        </section>
+
+        <section class="card">
+          <h3>即時對話回饋</h3>
+          <div class="chat-box" id="chatBox">
+            <div class="bubble">顧客：有沒有更適合送禮的選擇？</div>
+            <div class="bubble coach">教練：先確認預算與對象，再做 2 組對比推薦，成交機率較高。</div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h3>上月產品 Top 10（2026-02）</h3>
+          <ol class="sub" id="topProducts" style="line-height:1.8; padding-left:18px; margin:0"></ol>
+        </section>
+
+        <section class="card">
+          <h3>銷售人員月業績排行（2026-02）</h3>
+          <ol class="sub" id="salesRank" style="line-height:1.8; padding-left:18px; margin:0"></ol>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const modules = [
+      { name: '產品知識快問快答', progress: 78, level: '基礎' },
+      { name: '需求探詢與成交話術', progress: 62, level: '進階' },
+      { name: '客訴與退換貨應對', progress: 55, level: '必修' },
+      { name: '加購與客單提升演練', progress: 69, level: '進階' }
+    ];
+
+    const stores = [
+      { name: 'WEiZ嘉義旗艦店', completion: '103.98%', revenue: '935,863', target: '900,000' },
+      { name: 'WEiZ高雄旗艦店', completion: '117.66%', revenue: '1,117,775', target: '950,000' },
+      { name: 'WEiZ台中旗艦店', completion: '104.89%', revenue: '1,048,931', target: '1,000,000' }
+    ];
+
+    const topProducts = [
+      ['WiWU 智能閃充35W氮化鎵4孔USB延長電源供應器2C2A-47cm白 Wi-P02', 110],
+      ['WiWU 20W PD+QC3.0雙模快充電源供應器WB-01TW211', 74],
+      ['WiWU 2.5D全景高透順滑玻璃貼 iPhone 17 全系列', 57],
+      ['WiWU Cube磁吸無線充行動電源10000mAh二代', 57],
+      ['Zumoji Y25 復古CCD迷你相機', 54],
+      ['WiWU 智能閃充25W氮化鎵1C1A擴充開關2 3P壁插-白 Wi-P01', 44],
+      ['WEILIFE Qi2磁吸無線充行動電源WL-Qi202', 40],
+      ['樂米LARMI Ai6 智能手錶', 36],
+      ['LaPO 全功能11200mAh無線充電行動電源 WT-08P', 34],
+      ['昔馬SMASMALL 青春版電動刮鬍刀禮盒', 32]
+    ];
+
+    const salesRank = [
+      ['侯靖廷', 355646],
+      ['鄧詠璇', 340866],
+      ['周怡君 Jun Chou', 339512],
+      ['周姵岑 Erin Chou', 286530],
+      ['陳誼宸 Eva Chen', 277479],
+      ['林裕宸 Johnson Lin', 238784],
+      ['陳昱靜', 227959],
+      ['徐政明', 218548]
+    ];
+
+    const modulesEl = document.getElementById('modules');
+    modules.forEach(m => {
+      const row = document.createElement('div');
+      row.className = 'module';
+      row.innerHTML = `
+        <div>
+          <div class="name">${m.name}</div>
+          <div class="bar"><span style="width:${m.progress}%"></span></div>
+        </div>
+        <span class="tag">${m.level} ${m.progress}%</span>
+      `;
+      modulesEl.appendChild(row);
+    });
+
+    const tbody = document.getElementById('storeRows');
+    stores.forEach(s => {
+      const tr = document.createElement('tr');
+      const rate = parseFloat(String(s.completion).replace('%',''));
+      const cls = rate >= 110 ? 'good' : rate >= 100 ? 'mid' : 'bad';
+      tr.innerHTML = `
+        <td>${s.name}</td>
+        <td class="score ${cls}">${s.completion}</td>
+        <td>NT$${s.revenue}</td>
+        <td>NT$${s.target}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    const topProductsEl = document.getElementById('topProducts');
+    topProducts.forEach(([name, qty]) => {
+      const li = document.createElement('li');
+      li.textContent = `${name}（${qty}）`;
+      topProductsEl.appendChild(li);
+    });
+
+    const salesRankEl = document.getElementById('salesRank');
+    salesRank.forEach(([name, amount]) => {
+      const li = document.createElement('li');
+      li.textContent = `${name}（NT$${amount.toLocaleString('en-US')}）`;
+      salesRankEl.appendChild(li);
+    });
+
+    const chatBox = document.getElementById('chatBox');
+    document.getElementById('startBtn').onclick = () => {
+      chatBox.insertAdjacentHTML('beforeend', '<div class="bubble">系統：情境「猶豫型顧客」已開始，請在 30 秒內完成需求探詢。</div>');
+    };
+    document.getElementById('retryBtn').onclick = () => {
+      chatBox.insertAdjacentHTML('beforeend', '<div class="bubble coach">教練：已載入錯題複訓，這次重點是「先同理再提案」。</div>');
+    };
+    document.getElementById('reportBtn').onclick = () => {
+      alert('主管報表已生成（示意）。可接後端 API 匯出 CSV / XLSX。');
+    };
+  </script>
+</body>
+</html>

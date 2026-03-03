@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WEiZ 銷售培訓後台</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="stars"></div>
+  <main class="container">
+    <header class="hero">
+      <h1>🛰️ WEiZ 培訓後台</h1>
+      <p>成績分析、主管儀表、題庫管理、CSV/XLSX 報表</p>
+      <a class="admin-link" href="index.html">回到遊戲</a>
+    </header>
+
+    <section class="card">
+      <div id="kpi" class="kpi-grid"></div>
+      <div id="insights" style="margin-top:8px;"></div>
+      <div id="trend" class="trend-box"></div>
+      <div class="row wrap" style="margin-top:10px; gap:8px;">
+        <button id="exportCsvBtn">匯出 CSV</button>
+        <button id="exportXlsxBtn">匯出 XLSX</button>
+        <button id="clearBtn" class="danger">清空紀錄</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>📊 學員紀錄</h3>
+      <input id="searchName" placeholder="搜尋姓名" />
+      <div style="overflow:auto; margin-top:12px;">
+        <table id="table" border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;">
+          <thead><tr><th>姓名</th><th>階段</th><th>模式</th><th>分數</th><th>完成時間</th><th>答對率</th><th>明細</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <pre id="detail" style="white-space:pre-wrap; margin-top:12px;"></pre>
+    </section>
+
+    <section class="card">
+      <h3>🧩 題庫管理（新增 / 編輯 / 刪除 / 驗證）</h3>
+      <div id="bankErrors" class="error-box hidden"></div>
+      <div id="questionList"></div>
+      <hr/>
+      <h4 id="editorTitle">新增題目</h4>
+      <div class="grid2">
+        <label>題目 ID<input id="fId" placeholder="ex: q11" /></label>
+        <label>關卡標題<input id="fTitle" /></label>
+        <label>題型<input id="fType" value="基本QA" /></label>
+        <label>訓練階段
+          <select id="fStage">
+            <option value="新人">新人</option>
+            <option value="專員">專員</option>
+            <option value="資深專員">資深專員</option>
+            <option value="組長">組長</option>
+            <option value="店長">店長</option>
+          </select>
+        </label>
+        <label>能力維度<input id="fDimension" value="產品知識" /></label>
+      </div>
+      <label>題目內容<textarea id="fQuestion"></textarea></label>
+      <div class="grid2">
+        <label>選項1<input id="fOpt1" /></label>
+        <label>選項2<input id="fOpt2" /></label>
+        <label>選項3<input id="fOpt3" /></label>
+        <label>選項4<input id="fOpt4" /></label>
+      </div>
+      <label>正確答案（需與選項完全一致）<input id="fAnswer" /></label>
+      <label>解析<input id="fExplain" /></label>
+      <label>圖片鍵值（powerbank / charger / speaker）<input id="fImageKey" /></label>
+      <div class="row wrap" style="margin-top:8px; gap:8px;">
+        <button id="addOrUpdateBtn">新增題目</button>
+        <button id="cancelEditBtn" class="secondary hidden">取消編輯</button>
+        <button id="saveBankBtn">儲存題庫</button>
+        <button id="validateBankBtn" class="secondary">驗證題庫</button>
+        <button id="resetBankBtn" class="danger">恢復預設題庫</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

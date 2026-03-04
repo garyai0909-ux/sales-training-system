@@ -246,10 +246,12 @@
 
     const chatBox = document.getElementById('chatBox');
     document.getElementById('startBtn').onclick = () => {
-      chatBox.insertAdjacentHTML('beforeend', '<div class="bubble">系統：情境「猶豫型顧客」已開始，請在 30 秒內完成需求探詢。</div>');
+      window.open('./legacy-training.html', '_blank');
+      chatBox.insertAdjacentHTML('beforeend', '<div class="bubble">系統：已切到太空闖關頁（legacy-training.html）。</div>');
     };
     document.getElementById('retryBtn').onclick = () => {
-      chatBox.insertAdjacentHTML('beforeend', '<div class="bubble coach">教練：已載入錯題複訓，這次重點是「先同理再提案」。</div>');
+      window.open('./legacy-training.html#retry', '_blank');
+      chatBox.insertAdjacentHTML('beforeend', '<div class="bubble coach">教練：已啟動錯題複訓模式，頁面中的錯題池會自動載入。</div>');
     };
     document.getElementById('reportBtn').onclick = () => {
       alert('主管報表已生成（示意）。可接後端 API 匯出 CSV / XLSX。');

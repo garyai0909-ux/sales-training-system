@@ -3,66 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WEiZ 銷售培訓｜太空闖關</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>WEiZ｜銷售儀表板</title>
+  <meta http-equiv="refresh" content="0; url=./training-dashboard.html" />
+  <script>window.location.replace('./training-dashboard.html');</script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; padding: 24px; }
+    a { color: #0b66ff; }
+  </style>
 </head>
 <body>
-  <div class="stars"></div>
-  <main class="container">
-    <header class="hero">
-      <h1>🚀 WEiZ 銷售培訓太空闖關</h1>
-      <p>產品 QA + 銷售情境模擬（手機可用）</p>
-      <a class="admin-link" href="admin.html">進入主管後台與題庫管理</a>
-    </header>
-
-    <section class="card" id="startCard">
-      <label>學員姓名
-        <input id="traineeName" placeholder="請輸入姓名" maxlength="24" />
-      </label>
-      <label style="margin-top:10px; display:block;">訓練階段
-        <select id="traineeStage">
-          <option value="新人">新人</option>
-          <option value="專員">專員</option>
-          <option value="資深專員">資深專員</option>
-          <option value="組長">組長</option>
-          <option value="店長">店長</option>
-        </select>
-      </label>
-      <div class="row wrap" style="margin-top:10px;">
-        <button id="startBtn">開始完整訓練</button>
-        <button id="startWrongBtn" class="secondary">進入錯題複訓</button>
-      </div>
-    </section>
-
-    <section class="card hidden" id="gameCard">
-      <div class="row between wrap">
-        <div id="progress">第 1 / 10 關</div>
-        <div id="score">分數：0</div>
-      </div>
-      <div id="trainTag" class="tag">能力維度：產品知識</div>
-      <h2 id="levelTitle"></h2>
-      <p id="question"></p>
-      <img id="qImage" class="q-image hidden" alt="產品圖" />
-      <div id="options" class="options"></div>
-      <div class="row between wrap">
-        <small id="feedback"></small>
-        <button id="nextBtn" disabled>下一關</button>
-      </div>
-    </section>
-
-    <section class="card hidden" id="resultCard">
-      <h2>🏆 完成訓練！</h2>
-      <p id="finalName"></p>
-      <p id="finalScore"></p>
-      <p id="finalRank"></p>
-      <p id="finalHint"></p>
-      <div class="row wrap" style="gap:8px;">
-        <button id="retryWrongBtn">錯題複訓</button>
-        <button id="retryBtn" class="secondary">再玩一次</button>
-      </div>
-    </section>
-  </main>
-
-  <script src="script.js"></script>
+  <p>正在前往 <a href="./training-dashboard.html">銷售儀表板</a>…</p>
+  <p>若要進入舊版闖關訓練，請至 <a href="./legacy-training.html">legacy-training.html</a>。</p>
 </body>
 </html>

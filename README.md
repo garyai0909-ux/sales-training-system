@@ -16,7 +16,9 @@ python3 -m http.server 8787
 ```
 
 開啟：
-- 遊戲頁：`http://localhost:8787/index.html`
+- 主頁（銷售儀表板）：`http://localhost:8787/index.html`
+- 儀表板直達：`http://localhost:8787/training-dashboard.html`
+- 舊版闖關頁：`http://localhost:8787/legacy-training.html`
 - 後台頁：`http://localhost:8787/admin.html`
 
 ## 可外網展示方式（臨時 Demo）
@@ -67,8 +69,10 @@ ngrok http 8787
 
 ## 主要檔案
 
-- `index.html`：學員遊戲頁
-- `script.js`：遊戲流程與儲存邏輯
+- `index.html`：主入口（導向銷售儀表板）
+- `training-dashboard.html`：銷售儀表板（含教練模式）
+- `legacy-training.html`：舊版學員闖關頁
+- `script.js`：闖關流程與儲存邏輯（legacy 頁）
 - `admin.html`：後台 UI
 - `admin.js`：主管儀表 + 題庫管理 + 匯出
 - `styles.css`：共用樣式（含 RWD）

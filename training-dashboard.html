@@ -68,6 +68,9 @@
     .score.bad { color: var(--danger); }
 
     .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .coach-grid { display:grid; gap:8px; margin-top:10px; }
+    .coach-item { background:#0f1628; border:1px solid #20345a; border-radius:10px; padding:10px; font-size:13px; }
+    .coach-item b { color:#d5e4ff; }
     button {
       border: 1px solid var(--line); background: var(--soft); color: var(--text);
       border-radius: 10px; padding: 9px 12px; cursor: pointer; font-weight: 700;
@@ -128,9 +131,14 @@
         <section class="card">
           <h3>教練模式</h3>
           <div class="actions">
-            <button class="primary" id="startBtn">開始情境演練</button>
+            <button class="primary" id="startBtn">情境演練</button>
             <button id="retryBtn">錯題複訓</button>
             <button id="reportBtn">產生主管報表</button>
+          </div>
+          <div class="coach-grid">
+            <div class="coach-item"><b>情境演練：</b>模擬猶豫型、比價型、送禮型顧客對話，訓練提問與收斂能力。</div>
+            <div class="coach-item"><b>錯題複訓：</b>自動回放常錯題目與話術盲點，強化「先同理再提案」流程。</div>
+            <div class="coach-item"><b>產生主管報表：</b>輸出個人訓練分數、弱項維度與建議追蹤清單。</div>
           </div>
           <div class="sub" style="margin-top:8px">建議每日 15 分鐘，專攻高客訴情境與高單價商品話術。</div>
         </section>

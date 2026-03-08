@@ -172,36 +172,6 @@
       { name: '加購與客單提升演練', progress: 69, level: '進階' }
     ];
 
-    const stores = [
-      { name: 'WEiZ嘉義旗艦店', completion: '103.98%', revenue: '935,863', target: '900,000' },
-      { name: 'WEiZ高雄旗艦店', completion: '117.66%', revenue: '1,117,775', target: '950,000' },
-      { name: 'WEiZ台中旗艦店', completion: '104.89%', revenue: '1,048,931', target: '1,000,000' }
-    ];
-
-    const topProducts = [
-      ['WiWU 智能閃充35W氮化鎵4孔USB延長電源供應器2C2A-47cm白 Wi-P02', 110],
-      ['WiWU 20W PD+QC3.0雙模快充電源供應器WB-01TW211', 74],
-      ['WiWU 2.5D全景高透順滑玻璃貼 iPhone 17 全系列', 57],
-      ['WiWU Cube磁吸無線充行動電源10000mAh二代', 57],
-      ['Zumoji Y25 復古CCD迷你相機', 54],
-      ['WiWU 智能閃充25W氮化鎵1C1A擴充開關2 3P壁插-白 Wi-P01', 44],
-      ['WEILIFE Qi2磁吸無線充行動電源WL-Qi202', 40],
-      ['樂米LARMI Ai6 智能手錶', 36],
-      ['LaPO 全功能11200mAh無線充電行動電源 WT-08P', 34],
-      ['昔馬SMASMALL 青春版電動刮鬍刀禮盒', 32]
-    ];
-
-    const salesRank = [
-      ['侯靖廷', 355646],
-      ['鄧詠璇', 340866],
-      ['周怡君 Jun Chou', 339512],
-      ['周姵岑 Erin Chou', 286530],
-      ['陳誼宸 Eva Chen', 277479],
-      ['林裕宸 Johnson Lin', 238784],
-      ['陳昱靜', 227959],
-      ['徐政明', 218548]
-    ];
-
     const modulesEl = document.getElementById('modules');
     modules.forEach(m => {
       const row = document.createElement('div');
@@ -216,33 +186,79 @@
       modulesEl.appendChild(row);
     });
 
-    const tbody = document.getElementById('storeRows');
-    stores.forEach(s => {
-      const tr = document.createElement('tr');
-      const rate = parseFloat(String(s.completion).replace('%',''));
-      const cls = rate >= 110 ? 'good' : rate >= 100 ? 'mid' : 'bad';
-      tr.innerHTML = `
-        <td>${s.name}</td>
-        <td class="score ${cls}">${s.completion}</td>
-        <td>NT$${s.revenue}</td>
-        <td>NT$${s.target}</td>
-      `;
-      tbody.appendChild(tr);
-    });
+    const formatNumber = (value) => (Number(value) || 0).toLocaleString('zh-Hant-TW');
+    const formatPercent = (value) => `${(Number(value) * 100).toFixed(2)}%`;
+    const formatCurrency = (value) => `NT$${formatNumber(value)}`;
 
-    const topProductsEl = document.getElementById('topProducts');
-    topProducts.forEach(([name, qty]) => {
-      const li = document.createElement('li');
-      li.textContent = `${name}（${qty}）`;
-      topProductsEl.appendChild(li);
-    });
+    const updateKPIs = (kpis = {}, meta = {}) => {
+      const { actual_revenue, total_pcs, target_revenue, achievement_rate } = kpis;
+      document.getElementById('kpi1').textContent = formatNumber(actual_revenue);
+      document.getElementById('kpi2').textContent = formatNumber(total_pcs);
+      document.getElementById('kpi3').textContent = formatNumber(target_revenue);
+      document.getElementById('kpi4').textContent = formatPercent(achievement_rate || 0);
+      const tag = document.getElementById('dataSourceTag');
+      if (meta?.source_file) {
+        tag.textContent = `數據來源：${meta.source_file}（月份 ${meta.month}）`;
+      }
+    };
 
-    const salesRankEl = document.getElementById('salesRank');
-    salesRank.forEach(([name, amount]) => {
-      const li = document.createElement('li');
-      li.textContent = `${name}（NT$${amount.toLocaleString('en-US')}）`;
-      salesRankEl.appendChild(li);
-    });
+    const renderStores = (stores = []) => {
+      const tbody = document.getElementById('storeRows');
+      tbody.innerHTML = '';
+      stores.forEach((s) => {
+        const rate = (s.achievement_rate || 0) * 100;
+        const cls = rate >= 110 ? 'good' : rate >= 100 ? 'mid' : 'bad';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${s.name}</td>
+          <td class="score ${cls}">${rate.toFixed(2)}%</td>
+          <td>${formatCurrency(s.actual)}</td>
+          <td>${formatCurrency(s.target)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    };
+
+    const renderTopProducts = (products = []) => {
+      const el = document.getElementById('topProducts');
+      el.innerHTML = '';
+      products.forEach((item) => {
+        const li = document.createElement('li');
+        li.textContent = `${item.product}（${item.quantity}）`;
+        el.appendChild(li);
+      });
+    };
+
+    const renderSalesRank = (items = []) => {
+      const el = document.getElementById('salesRank');
+      el.innerHTML = '';
+      items.forEach((person) => {
+        const li = document.createElement('li');
+        li.textContent = `${person.name}（${formatCurrency(person.amount)}）`;
+        el.appendChild(li);
+      });
+    };
+
+    const handleError = (err) => {
+      console.error(err);
+      document.getElementById('dataSourceTag').textContent = '數據載入失敗，請稍後重試';
+    };
+
+    const loadDashboard = async () => {
+      try {
+        const res = await fetch(`./data/dashboard.json?t=${Date.now()}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error('fetch dashboard failed');
+        const data = await res.json();
+        updateKPIs(data.kpis, data.meta);
+        renderStores(data.stores);
+        renderTopProducts(data.top_products);
+        renderSalesRank(data.sales_people);
+      } catch (error) {
+        handleError(error);
+      }
+    };
+
+    loadDashboard();
 
     const chatBox = document.getElementById('chatBox');
     document.getElementById('startBtn').onclick = () => {

@@ -1,0 +1,120 @@
+{
+  "meta": {
+    "source_file": "202602銷售數據.xlsx",
+    "month": "202602",
+    "generated_at": "2026-03-09T00:40:23.857157"
+  },
+  "kpis": {
+    "target_revenue": 2850000,
+    "actual_revenue": 3102569,
+    "achievement_rate": 1.0886,
+    "total_transactions": 1440,
+    "total_pcs": 2063
+  },
+  "stores": [
+    {
+      "name": "WEiZ嘉義旗艦店",
+      "target": 900000,
+      "actual": 935863,
+      "achievement_rate": 1.0398
+    },
+    {
+      "name": "WEiZ高雄旗艦店",
+      "target": 950000,
+      "actual": 1117775,
+      "achievement_rate": 1.1766
+    },
+    {
+      "name": "WEiZ台中旗艦店",
+      "target": 1000000,
+      "actual": 1048931,
+      "achievement_rate": 1.0489
+    }
+  ],
+  "sales_people": [
+    {
+      "name": "侯靖廷",
+      "amount": 355646
+    },
+    {
+      "name": "鄧詠璇",
+      "amount": 340866
+    },
+    {
+      "name": "周怡君 Jun Chou",
+      "amount": 339512
+    },
+    {
+      "name": "周姵岑 Erin Chou",
+      "amount": 286530
+    },
+    {
+      "name": "陳誼宸 Eva Chen",
+      "amount": 277479
+    },
+    {
+      "name": "林裕宸 Johnson Lin",
+      "amount": 238784
+    },
+    {
+      "name": "陳昱靜",
+      "amount": 227959
+    },
+    {
+      "name": "徐政明",
+      "amount": 218548
+    }
+  ],
+  "top_products": [
+    {
+      "product": "WiWU 智能閃充35W氮化鎵4孔USB延長電源供應器2C2A-47cm白 Wi-P02",
+      "category": "變壓器｜充電器",
+      "quantity": 110
+    },
+    {
+      "product": "WiWU 20W PD+QC3.0雙模快充電源供應器WB-01TW211",
+      "category": "變壓器｜充電器",
+      "quantity": 74
+    },
+    {
+      "product": "WiWU 2.5D全景高透順滑玻璃貼 iPhone 17 全系列",
+      "category": "手機保護貼",
+      "quantity": 57
+    },
+    {
+      "product": "WiWU Cube磁吸無線充行動電源10000mAh二代",
+      "category": "無線充電",
+      "quantity": 57
+    },
+    {
+      "product": "Zumoji Y25 復古CCD迷你相機",
+      "category": "手機｜拍攝周邊",
+      "quantity": 54
+    },
+    {
+      "product": "WiWU 智能閃充25W氮化鎵1C1A擴充開關2 3P壁插-白 Wi-P01",
+      "category": "變壓器｜充電器",
+      "quantity": 44
+    },
+    {
+      "product": "WEILIFE Qi2磁吸無線充行動電源WL-Qi202",
+      "category": "無線充電",
+      "quantity": 40
+    },
+    {
+      "product": "樂米LARMI Ai6 智能手錶",
+      "category": "穿戴配件",
+      "quantity": 36
+    },
+    {
+      "product": "LaPO 全功能11200mAh無線充電行動電源 WT-08P",
+      "category": "行動電源",
+      "quantity": 34
+    },
+    {
+      "product": "昔馬SMASMALL 青春版電動刮鬍刀禮盒",
+      "category": "生活小家電",
+      "quantity": 32
+    }
+  ]
+}

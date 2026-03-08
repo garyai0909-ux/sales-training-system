@@ -109,3 +109,19 @@ mysql -u root -p < server/seed.sql
 3. HTTPS + CORS 白名單
 4. 功能驗收（分級、題庫、新品題、匯出）
 5. 稽核留存與每日備份
+
+## 銷售數據匯入（每週例行）
+
+為了讓儀表板採用最新銷售成績，新增 `scripts/import_sales_data.py`，流程如下：
+
+1. 確定共享資料夾 `WEIBO AI存取區/2026｜銷售數據/` 已放入最新的 `YYYYMM銷售數據.xlsx`。
+2. 在 repo 目錄啟動虛擬環境（首次執行 `python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements-data.txt`，目前使用 openpyxl + pandas）。
+3. 執行：
+   ```bash
+   source .venv/bin/activate
+   python scripts/import_sales_data.py --month 202602
+   ```
+   未指定 `--month` 會自動挑選目錄中最新的檔案，也可用 `--source-file` 指向自訂路徑。
+4. 指令會輸出 `data/dashboard.json`，供前端載入（含 KPI、門市/人員排行、TOP 10 商品）。
+
+> 小提醒：在 Zeabur 或其他部署環境，只要同步 `data/dashboard.json` 即可，無需把整份 Excel 上傳到前端。

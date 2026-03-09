@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v2.0.1 - 2026-03-09
+
+### 修復
+- 修復 training-dashboard.html 教練模式按鈕無法正確串接闖關遊戲的問題，改為同頁 overlay（覆蓋層）+ iframe（內嵌框架）載入訓練畫面，避開 Zeabur 靜態路由 fallback（回退）造成的導頁失敗。
+- 修復 script.js 在嵌入模式下與儀表板的互動邏輯，新增 postMessage（跨視窗訊息）同步訓練模式、開始/完成事件與關閉控制。
+
+### 改善
+- 新增教練模式視覺提示與關閉體驗，包含 pulse-highlight（脈衝提示）動畫、Esc 關閉與點背景關閉。
+- 同步調整 legacy-training.html 與 styles.css，讓獨立頁面與嵌入頁面共用一致的訓練體驗。
+
 ## v2.0.0 - 2026-02-09
 
 ### 新增

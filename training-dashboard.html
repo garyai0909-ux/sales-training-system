@@ -83,9 +83,51 @@
     }
     .bubble.coach { border-color: #2f6f60; background:#0f1d1b; }
 
+    .coach-overlay {
+      position: fixed; inset: 0;
+      background: rgba(2, 6, 18, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+    }
+    .coach-overlay.hidden { display: none; }
+    .coach-modal {
+      width: min(1100px, 100%);
+      height: min(760px, 95vh);
+      background: #050913;
+      border: 1px solid #243556;
+      border-radius: 20px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+      display: flex; flex-direction: column;
+    }
+    .coach-modal__header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px; gap: 12px;
+      border-bottom: 1px solid #1a2742;
+    }
+    .coach-modal__title { font-size: 15px; font-weight: 700; }
+    .coach-modal__subtitle { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .coach-close {
+      border-radius: 999px;
+      background: transparent;
+      border: 1px solid #2f415f;
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    .coach-frame {
+      flex: 1;
+      border: none;
+      width: 100%;
+      background: #01030b;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+
     @media (max-width: 900px) {
       .grid { grid-template-columns: 1fr; }
       .kpis { grid-template-columns: repeat(2,1fr); }
+      .coach-modal { height: 95vh; }
     }
   </style>
 </head>
@@ -164,6 +206,19 @@
     </div>
   </div>
 
+  <div id="coachOverlay" class="coach-overlay hidden" aria-hidden="true">
+    <div class="coach-modal" role="dialog" aria-modal="true" aria-labelledby="coachModalTitle">
+      <div class="coach-modal__header">
+        <div>
+          <div id="coachModalTitle" class="coach-modal__title">教練模式｜太空闖關</div>
+          <div id="coachModalSubtitle" class="coach-modal__subtitle">情境演練</div>
+        </div>
+        <button id="closeCoachBtn" class="coach-close" type="button">關閉</button>
+      </div>
+      <iframe id="coachFrame" class="coach-frame" title="教練模式闖關遊戲" loading="lazy"></iframe>
+    </div>
+  </div>
+  
   <script>
     const modules = [
       { name: '產品知識快問快答', progress: 78, level: '基礎' },
@@ -260,14 +315,136 @@
 
     loadDashboard();
 
+    const coachOverlay = document.getElementById('coachOverlay');
+    const coachFrame = document.getElementById('coachFrame');
+    const coachSubtitle = document.getElementById('coachModalSubtitle');
+    const closeCoachBtn = document.getElementById('closeCoachBtn');
+    let coachFrameBootstrapped = false;
+    let coachFrameReady = false;
+
+    const coachFrameTemplate = String.raw`<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WEiZ 銷售培訓｜太空闖關（嵌入）</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="stars"></div>
+  <main class="container">
+    <header class="hero">
+      <h1>🚀 WEiZ 銷售培訓太空闖關</h1>
+      <p>產品 QA + 銷售情境模擬（手機可用）</p>
+      <a class="admin-link" href="admin.html" target="_blank" rel="noreferrer">開新頁管理題庫</a>
+    </header>
+
+    <section class="card" id="startCard">
+      <label>學員姓名
+        <input id="traineeName" placeholder="請輸入姓名" maxlength="24" />
+      </label>
+      <label style="margin-top:10px; display:block;">訓練階段
+        <select id="traineeStage">
+          <option value="新人">新人</option>
+          <option value="專員">專員</option>
+          <option value="資深專員">資深專員</option>
+          <option value="組長">組長</option>
+          <option value="店長">店長</option>
+        </select>
+      </label>
+      <div class="row wrap" style="margin-top:10px;">
+        <button id="startBtn">開始完整訓練</button>
+        <button id="startWrongBtn" class="secondary">進入錯題複訓</button>
+      </div>
+    </section>
+
+    <section class="card hidden" id="gameCard">
+      <div class="row between wrap">
+        <div id="progress">第 1 / 10 關</div>
+        <div id="score">分數：0</div>
+      </div>
+      <div id="trainTag" class="tag">能力維度：產品知識</div>
+      <h2 id="levelTitle"></h2>
+      <p id="question"></p>
+      <img id="qImage" class="q-image hidden" alt="產品圖" />
+      <div id="options" class="options"></div>
+      <div class="row between wrap">
+        <small id="feedback"></small>
+        <button id="nextBtn" disabled>下一關</button>
+      </div>
+    </section>
+
+    <section class="card hidden" id="resultCard">
+      <h2>🏆 完成訓練！</h2>
+      <p id="finalName"></p>
+      <p id="finalScore"></p>
+      <p id="finalRank"></p>
+      <p id="finalHint"></p>
+      <div class="row wrap" style="gap:8px;">
+        <button id="retryWrongBtn">錯題複訓</button>
+        <button id="retryBtn" class="secondary">再玩一次</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    window.__COACH_EMBED__ = window.self !== window.top;
+  </script>
+  <script src="./script.js"></script>
+</body>
+</html>`;
+
+    const sendCoachMessage = (payload) => {
+      if (!coachFrameReady) return;
+      coachFrame.contentWindow?.postMessage(payload, '*');
+    };
+
+    const openCoach = (mode = 'all') => {
+      coachSubtitle.textContent = mode === 'wrong-only' ? '錯題複訓模式' : '情境演練';
+      coachOverlay.classList.remove('hidden');
+      coachOverlay.setAttribute('aria-hidden', 'false');
+      const message = { source: 'coach-dashboard', type: 'coach-open', mode };
+
+      if (!coachFrameBootstrapped) {
+        coachFrameBootstrapped = true;
+        coachFrame.srcdoc = coachFrameTemplate;
+        coachFrame.addEventListener('load', () => {
+          coachFrameReady = true;
+          coachFrame.contentWindow?.postMessage(message, '*');
+        }, { once: true });
+      } else if (coachFrameReady) {
+        coachFrame.contentWindow?.postMessage(message, '*');
+      }
+    };
+
+    const closeCoach = () => {
+      coachOverlay.classList.add('hidden');
+      coachOverlay.setAttribute('aria-hidden', 'true');
+      sendCoachMessage({ source: 'coach-dashboard', type: 'coach-close' });
+    };
+
+    closeCoachBtn.addEventListener('click', closeCoach);
+    coachOverlay.addEventListener('click', (evt) => {
+      if (evt.target === coachOverlay) closeCoach();
+    });
+    document.addEventListener('keydown', (evt) => {
+      if (evt.key === 'Escape' && !coachOverlay.classList.contains('hidden')) closeCoach();
+    });
+
+    window.addEventListener('message', (event) => {
+      if (event.data?.source === 'legacy-game' && event.data.type === 'request-close') {
+        closeCoach();
+      }
+    });
+
     const chatBox = document.getElementById('chatBox');
     document.getElementById('startBtn').onclick = () => {
-      window.open('./legacy-training.html', '_blank');
-      chatBox.insertAdjacentHTML('beforeend', '<div class="bubble">系統：已切到太空闖關頁（legacy-training.html）。</div>');
+      openCoach('all');
+      chatBox.insertAdjacentHTML('beforeend', '<div class="bubble">系統：已在儀表板內開啟太空闖關畫面。</div>');
     };
     document.getElementById('retryBtn').onclick = () => {
-      window.open('./legacy-training.html#retry', '_blank');
-      chatBox.insertAdjacentHTML('beforeend', '<div class="bubble coach">教練：已啟動錯題複訓模式，頁面中的錯題池會自動載入。</div>');
+      openCoach('wrong-only');
+      chatBox.insertAdjacentHTML('beforeend', '<div class="bubble coach">教練：已開啟錯題複訓畫面，可直接挑戰常錯題。</div>');
     };
     document.getElementById('reportBtn').onclick = () => {
       alert('主管報表已生成（示意）。可接後端 API 匯出 CSV / XLSX。');

@@ -82,6 +82,10 @@ const optionsEl = $('options');
 const feedbackEl = $('feedback');
 const qImage = $('qImage');
 const trainTag = $('trainTag');
+const startBtnEl = $('startBtn');
+const startWrongBtnEl = $('startWrongBtn');
+const retryBtnEl = $('retryBtn');
+const retryWrongBtnEl = $('retryWrongBtn');
 
 let mode = 'all';
 let idx = 0;
@@ -91,6 +95,23 @@ let activeLevels = [];
 let revisitQueue = [];
 let currentStage = '新人';
 const sessionAnswers = [];
+const isEmbedded = Boolean(window.__COACH_EMBED__);
+
+const notifyParent = (payload) => {
+  if (!isEmbedded || !window.parent) return;
+  window.parent.postMessage({ source: 'legacy-game', ...payload }, '*');
+};
+
+const setCoachModeHint = (targetMode) => {
+  const normalized = targetMode === 'wrong-only' ? 'wrong-only' : 'all';
+  startBtnEl?.classList.toggle('pulse-highlight', normalized === 'all');
+  startWrongBtnEl?.classList.toggle('pulse-highlight', normalized === 'wrong-only');
+};
+
+const clearCoachModeHint = () => {
+  startBtnEl?.classList.remove('pulse-highlight');
+  startWrongBtnEl?.classList.remove('pulse-highlight');
+};
 
 const shuffle = (arr) => arr.map(v => [Math.random(), v]).sort((a, b) => a[0] - b[0]).map(v => v[1]);
 
@@ -184,7 +205,10 @@ function start(playMode) {
   revisitQueue = [];
 
   activeLevels = mode === 'wrong-only' ? pullWrongPool(levels) : [...levels];
-  if (!activeLevels.length) return alert(mode === 'wrong-only' ? '目前沒有錯題可複訓' : '題庫為空，請到後台設定題目');
+  if (!activeLevels.length) {
+    notifyParent({ type: 'session-empty', mode, stage: currentStage });
+    return alert(mode === 'wrong-only' ? '目前沒有錯題可複訓' : '題庫為空，請到後台設定題目');
+  }
 
   startCard.classList.add('hidden');
   resultCard.classList.add('hidden');
@@ -192,6 +216,7 @@ function start(playMode) {
   idx = 0;
   score = 0;
   sessionAnswers.length = 0;
+  notifyParent({ type: 'session-started', mode, stage: currentStage });
   render();
 }
 
@@ -249,6 +274,8 @@ function showResult() {
   } else {
     $('finalHint').textContent = '恭喜全對！可挑戰錯題模式複盤團隊常見失誤。';
   }
+
+  notifyParent({ type: 'session-finished', mode, score, total, wrongCount: wrong.length, stage: currentStage });
 }
 
 $('startBtn').onclick = () => start('all');
@@ -267,3 +294,20 @@ $('nextBtn').onclick = () => {
   resultCard.classList.remove('hidden');
   showResult();
 };
+window.addEventListener('message', (event) => {
+  const data = event.data;
+  if (!data || data.source !== 'coach-dashboard') return;
+
+  if (data.type === 'coach-open') {
+    setCoachModeHint(data.mode);
+    setTimeout(() => $('traineeName').focus(), 150);
+    startCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else if (data.type === 'coach-close') {
+    clearCoachModeHint();
+  } else if (data.type === 'coach-start' && data.mode) {
+    if (data.name) $('traineeName').value = data.name;
+    if (data.stage && STAGE_ORDER.includes(data.stage)) $('traineeStage').value = data.stage;
+    start(data.mode);
+  }
+});
+

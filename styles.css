@@ -57,6 +57,15 @@ button {
 button.secondary { background: rgba(69, 97, 176, 0.85); }
 button.danger { background: linear-gradient(90deg, #b93e55, var(--danger)); }
 button:disabled { opacity: .45; cursor: not-allowed; }
+button.pulse-highlight {
+  animation: pulse-highlight 1.6s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(121, 200, 255, 0.55);
+}
+@keyframes pulse-highlight {
+  0% { box-shadow: 0 0 0 0 rgba(121, 200, 255, 0.55); }
+  70% { box-shadow: 0 0 0 14px rgba(121, 200, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(121, 200, 255, 0); }
+}
 .options { display: grid; gap: 10px; margin: 14px 0; }
 .option { text-align: left; background: rgba(32, 52, 114, .75); border: 1px solid #5f84df; }
 .option.correct { background: rgba(38, 133, 90, .72); border-color: #78ffc2; }
